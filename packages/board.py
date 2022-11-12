@@ -1,137 +1,148 @@
+from termcolor import colored
+
+
+class Square:
+    rows_letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
+
+    def __init__(self, x, y):
+        self.position = (x, y)
+        index = self.rows_letters.index(x)
+        board.board[index][y - 1] = self
+
+
+class White(Square):
+    def __repr__(self):
+        return chr(9632)
+
+
+class Blue(Square):
+    def __repr__(self):
+        return colored(chr(9632), "blue")
+
+
 class Board:
-    board = []
-    position_dict = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7}
-
-    def show(self):
+    def display(self):
         print("   ", 1, 2, 3, 4, 5, 6, 7, 8, sep=" ")
-        print("    ---------------")
-        for row in self.board:
-            for element in row:
-                element = f"{element}|"
-            print(row.name + ": ", *row.row)
+        i = 0
+        for x in self.board:
+            print(Square.rows_letters[i] + ": ", *x)
+            i += 1
 
-    def __getitem__(self, key):
-        return self.board[self.position_dict[key]]
-
-    def __setitem__(self, index, row, value):
-        self.board[self.position_dict[index][row]] = value
+    def __init__(self):
+        self.board = [[0]*8 for i in range(8)]
 
 
-class Row:
-    def __init__(self, letter, row):
-        self.name = letter
-        self.row = row
-        board.board.append(self)
+class Piece:
 
-    def __repr__(self):
-        return f"{self.name}: {self.row}"
+    selected = False
 
-    def __getitem__(self, index):
-        return self.row[index - 1]
-
-    def __setitem__(self, index, value):
-        self.row[index - 1] = value
-
-    def __delitem__(self, index):
-        del self.row[index - 1]
-
-
-class Pawn:
-    
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        board[x][y] = self
-           
-    def __repr__(self):
-        return self.name
+        self.position = (x, y)
+        index = Square.rows_letters.index(x)
+        board.board[index][y - 1] = self
 
-
-class ComputerPawn(Pawn):
-    name = "X"
-
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        computer.pawns.append(self)
-
-
-class UserPawn(Pawn):
-    name = "1"
-
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        user.pawns.append(self)
-    
-    def move(self):
-        def get_keys_from_value(dict, v):
-            for key, value in dict.items():
-                value += 1
-                if value == v:
-                    return key
-        row = get_keys_from_value(board.position_dict, board.position_dict[self.x])
-        first_y = self.y - 1
-        second_y = self.y + 1
-        if self.must_eat():
-            go = input("You have a \"must eat\". Type \"go\" to eat opponent's pawn")
-            if go == "go":
-                self.change_position(self.must_eat().x, self.must_eat().y)
-        else:
-            print(f"{row}{first_y} / {row}{second_y}")
-            
-        
     def change_position(self, x, y):
+        index = Square.rows_letters.index(self.x)
+        board.board[index][self.y - 1] = White(self.x, self.y)
         self.x = x
         self.y = y
-        board[x][y] = self
-        
-    
-    def must_eat(self):
-        if not any(board.position_dict[pawn.x] + 1 == board.position_dict[self.x] and (pawn.y - 1 == self.y or pawn.y + 1 == self.y) for pawn in computer.pawns):
-            return False
+        self.position = (x, y)
+        index = Square.rows_letters.index(x)
+        board.board[index][y - 1] = self
+
+
+
+class UserPiece(Piece):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        user_pieces.append(self)
+
+    def __repr__(self):
+        if self.selected == False:
+            return colored(chr(9675), "red")
         else:
-            for pawn in computer.pawns:
-                if board.position_dict[pawn.x] + 1 == board.position_dict[self.x] and (pawn.y - 1 == self.y or pawn.y +1 == self.y):
-                    return pawn
-################### OGARNĄĆ USUWANIE ########################
+            return colored(chr(9689), "red")
 
-class User:
-    pawns = []
+    def move(self):
+        row = Square.rows_letters[Square.rows_letters.index(self.x) - 1]
+        first_option = f"{row}{str(self.y - 1)}"
+        second_option = f"{row}{str(self.y + 1)}"
+        for piece in computer_pieces:
+            if piece.position == (row, self.y - 1) or piece.position == (row, self.y + 1):
+                print(f"{piece.x}{piece.y}")
+        print("Possible moves:")
+        if self.y - 1 > 0:
+            print(first_option)
+        if self.y + 1 < 7:
+            print(second_option)
+        choose_move = input("Choose square which you want to go: ")
+        if choose_move == first_option:
+            self.change_position(row, self.y - 1)
+        elif choose_move == second_option:
+            self.change_position(row, self.y + 1)
 
 
-class Computer:
-    pawns = []
+class ComputerPiece(Piece):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        computer_pieces.append(self)
+
+    def __repr__(self):
+        if self.selected == False:
+            return colored(chr(9675), "yellow")
+        else:
+            return colored(chr(9689), "yellow")
 
 
-all_pawns = []
-board = Board()
-user = User()
-computer = Computer()
+def create_board():
+    i = 0
+    for row in board.board:
+        n = 1
+        for square in row:
+            if (i % 2 == 0 and n % 2 == 1) or (i % 2 == 1 and n % 2 == 0):
+                Blue(Square.rows_letters[i], n)
+            else:
+                White(Square.rows_letters[i], n)
+            n += 1
+        i += 1
 
 
-def create_pawn(row, pawn_type, from_second):
-    for number, _ in enumerate(row):
+def create_pieces(row, from_second):
+    list_index = board.board.index(row)
+    if list_index in [0, 1, 2, 5, 6, 7]:
         if from_second == True:
-            if number % 2 == 0 and number > 0:
-                pawn_type(row.name, number)
+            for square in row:
+                square_index = row.index(square)
+                if square_index in [1, 3, 5, 7]:
+                    if list_index < 3:
+                        ComputerPiece(
+                            Square.rows_letters[list_index], square_index)
+                    else:
+                        UserPiece(
+                            Square.rows_letters[list_index], square_index)
         else:
-            if number % 2 == 1:
-                pawn_type(row.name, number)
+            for square in row:
+                square_index = row.index(square)
+                if square_index in [0, 2, 4, 6]:
+                    if list_index < 3:
+                        ComputerPiece(
+                            Square.rows_letters[list_index], square_index)
+                    else:
+                        UserPiece(
+                            Square.rows_letters[list_index], square_index)
 
 
-a = Row("A", [0] * 8)
-b = Row("B", [0] * 8)
-c = Row("C", [0] * 8)
-d = Row("D", [0] * 8)
-e = Row("E", [0] * 8)
-f = Row("F", [0] * 8)
-g = Row("G", [0] * 8)
-h = Row("H", [0] * 8)
+user_pieces = []
+computer_pieces = []
+board = Board()
+create_board()
+create_pieces(board.board[0], False)
+create_pieces(board.board[1], True)
+create_pieces(board.board[2], False)
+create_pieces(board.board[5], True)
+create_pieces(board.board[6], False)
+create_pieces(board.board[7], True)
 
-create_pawn(a, ComputerPawn, False)
-create_pawn(b, ComputerPawn, True)
-create_pawn(c, ComputerPawn, False)
-create_pawn(f, UserPawn, True)
-create_pawn(g, UserPawn, False)
-create_pawn(h, UserPawn, True)
-dupa = ComputerPawn("E", 1)
 
