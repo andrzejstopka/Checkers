@@ -20,7 +20,7 @@ def must_eat():
     for key in result.keys():
         print(f"{key.x}{key.y}", sep=" ", end=" ")
     print("\r")
-    select_piece = input("Select a piece: ")
+    select_piece = input("Select a piece: ").capitalize()
     for piece, square in result.items():
         if select_piece == f"{piece.x}{str(piece.y)}":
             if isinstance(square, Piece):
@@ -33,7 +33,7 @@ def must_eat():
                 for option in square:
                     print(f"{option.x}{option.y}", sep=" ", end=" ")
                 print("\r")
-                select_piece_to_eat = input("Choose a piece to eat: ")
+                select_piece_to_eat = input("Choose a piece to eat: ").capitalize()
                 for option in square:
                     if select_piece_to_eat == f"{option.x}{str(option.y)}":
                         piece.selected = True
@@ -46,8 +46,9 @@ def must_eat():
 def user_turn():
     while True:
         try:
-            select_piece_x = input("Select pieces's row [\"A\"-\"H\"]: ")
-            select_piece_y = int(input("Select pieces's column [1-8]: "))
+            select_piece = input("Select a piece's row [\"A\"-\"H\"] and row [1-8]: ")
+            select_piece_x = select_piece[0].capitalize()
+            select_piece_y = int(select_piece[1])
             if all(piece.position != (select_piece_x, select_piece_y) for piece in user_pieces):
                 raise ValueError
         except ValueError:
@@ -70,6 +71,7 @@ while True:
     if must_eat() == True:
         continue
     user_turn()
+    
     
         
     
