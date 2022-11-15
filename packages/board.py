@@ -66,23 +66,32 @@ class UserPiece(Piece):
             return colored(chr(9689), "red")
 
     def move(self):
+        possible_moves = []
         row = Square.rows_letters[Square.rows_letters.index(self.x) - 1]
+        index = Square.rows_letters.index(row)
         first_option = f"{row}{str(self.y - 1)}"
         second_option = f"{row}{str(self.y + 1)}"
         for piece in computer_pieces:
             if piece.position == (row, self.y - 1) or piece.position == (row, self.y + 1):
                 print(f"{piece.x}{piece.y}")
+        if self.y - 1 > 0 and isinstance(board.board[index][self.y - 2], UserPiece) == False:
+            possible_moves.append(first_option)
+        if self.y + 1 < 7 and isinstance(board.board[index][self.y], UserPiece) == False:
+            possible_moves.append(second_option)
+        if len(possible_moves) == 0:
+            return False
         print("Possible moves:")
-        if self.y - 1 > 0:
-            print(first_option)
-        if self.y + 1 < 7:
-            print(second_option)
-        choose_move = input("Choose square which you want to go: ")
-        if choose_move == first_option:
-            self.change_position(row, self.y - 1)
-        elif choose_move == second_option:
-            self.change_position(row, self.y + 1)
-
+        print(*possible_moves, sep=", ")
+        while True:
+            choose_move = input("Choose square which you want to go: ")
+            if choose_move == first_option:
+                self.change_position(row, self.y - 1)
+            elif choose_move == second_option:
+                self.change_position(row, self.y + 1)
+            else:
+                print("You must choose one of the following moves.")
+                continue
+            break
 
 class ComputerPiece(Piece):
     def __init__(self, x, y):
@@ -143,6 +152,8 @@ create_pieces(board.board[1], True)
 create_pieces(board.board[2], False)
 create_pieces(board.board[5], True)
 create_pieces(board.board[6], False)
-create_pieces(board.board[7], True)
+create_pieces(board.board[7], True) 
+
+
 
 

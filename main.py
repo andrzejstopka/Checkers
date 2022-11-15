@@ -16,10 +16,9 @@ def must_eat():
                 result[user_piece] = computer_piece
     if len(result) == 0:
         return False
-    
     print("You have the must eat! Choose a piece: ")
     for key in result.keys():
-        print(f"{key.x}{key.y}", end=" ")
+        print(f"{key.x}{key.y}", sep=" ", end=" ")
     print("\r")
     select_piece = input("Select a piece: ")
     for piece, square in result.items():
@@ -30,9 +29,9 @@ def must_eat():
                 piece.change_position(square.position[0], square.position[1])
                 piece.selected = False
                 computer_pieces.remove(square)
-            else:
+            elif isinstance(square, tuple):
                 for option in square:
-                    print(f"{option.x}{option.y}", end=" ")
+                    print(f"{option.x}{option.y}", sep=" ", end=" ")
                 print("\r")
                 select_piece_to_eat = input("Choose a piece to eat: ")
                 for option in square:
@@ -41,22 +40,36 @@ def must_eat():
                         board.display()
                         piece.change_position(option.x, option.y)
                         piece.selected = False
-                        computer_pieces.remove(option)
+                        computer_pieces.remove(option)                                              
     return True
 
 def user_turn():
-    select_piece_x = input("Select pieces's row [\"A\"-\"H\"]: ")
-    select_piece_y = int(input("Select pieces's column [1-8]: "))
+    while True:
+        try:
+            select_piece_x = input("Select pieces's row [\"A\"-\"H\"]: ")
+            select_piece_y = int(input("Select pieces's column [1-8]: "))
+            if all(piece.position != (select_piece_x, select_piece_y) for piece in user_pieces):
+                raise ValueError
+        except ValueError:
+            print("There is no such piece, try again.")
+            continue
+        break
     for piece in user_pieces:
         if piece.position == (select_piece_x, select_piece_y):
             piece.selected = True
             board.display()
-            piece.move()
+            if piece.move() == False:
+                print("The piece can't be moved")
+                piece.selected = False
+                return False
             piece.selected = False
-    
+            
 
 while True:
     board.display()
     if must_eat() == True:
         continue
     user_turn()
+    
+        
+    
