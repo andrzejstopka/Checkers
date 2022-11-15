@@ -146,7 +146,6 @@ def create_pieces(row, from_second):
                         else:
                             UserPiece(Square.rows_letters[list_index], square_index)
 
-
 user_pieces = []
 computer_pieces = []
 board = Board()
@@ -157,11 +156,8 @@ create_pieces(board.board[2], False)
 create_pieces(board.board[5], True)
 create_pieces(board.board[6], False)
 create_pieces(board.board[7], True) 
-# dupa = ComputerPiece("E", 2)
-# dupa = ComputerPiece("D", 8)
+dupa = ComputerPiece("E", 2)
+dupa = ComputerPiece("E", 4)
+dupa = ComputerPiece("D", 3)
 
 
-
-
-for x in user_pieces:
-    print(x.position)
