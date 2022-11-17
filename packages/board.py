@@ -45,6 +45,8 @@ class Piece:
         board.board[index][y - 1] = self
 
     def change_position(self, x, y):
+        if x == "A":
+            self.queen = True
         index = Square.rows_letters.index(self.x)
         board.board[index][self.y - 1] = White(self.x, self.y)
         self.x = x
@@ -56,15 +58,14 @@ class Piece:
 
 
 class UserPiece(Piece):
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        user_pieces.append(self)
-
     def __repr__(self):
-        if self.selected == False:
-            return colored(chr(9675), "red")
+        if self.queen == False:
+            if self.selected == False:
+                return colored(chr(9675), "red")
+            else:
+                return colored(chr(9689), "red")
         else:
-            return colored(chr(9689), "red")
+                return colored(chr(9830), "red")
 
     def move(self):
         if self.queen == False:
@@ -73,9 +74,9 @@ class UserPiece(Piece):
             index = Square.rows_letters.index(row)
             first_option = f"{row}{str(self.y - 1)}"
             second_option = f"{row}{str(self.y + 1)}"
-            if self.y - 1 > 0 and isinstance(board.board[index][self.y - 2], UserPiece) == False:
+            if self.y - 1 > 0 and isinstance(board.board[index][self.y - 2], White) == True:
                 possible_moves.append(first_option)
-            if self.y + 1 < 9 and isinstance(board.board[index][self.y], UserPiece) == False:
+            if self.y + 1 < 9 and isinstance(board.board[index][self.y], White) == True:
                 possible_moves.append(second_option)
             if len(possible_moves) == 0:
                 return False
@@ -118,17 +119,21 @@ class UserPiece(Piece):
                 y += 1
                 possible_moves.append((Square.rows_letters[index], y))
             
-            print(possible_moves)
+            result = []
+            for x in possible_moves:
+                for y in white_squares:
+                    if y.position == (x[0], x[1]):
+                        result.append(x)
+            return result
 class ComputerPiece(Piece):
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        computer_pieces.append(self)
-
     def __repr__(self):
-        if self.selected == False:
-            return colored(chr(9675), "yellow")
+        if self.queen == False:
+            if self.selected == False:
+                return colored(chr(9675), "yellow")
+            else:
+                return colored(chr(9689), "yellow")
         else:
-            return colored(chr(9689), "yellow")
+            return colored(chr(9830), "yellow")
 
 
 def create_board():
@@ -172,8 +177,6 @@ def create_pieces(row, from_second):
                         else:
                             UserPiece(Square.rows_letters[list_index], square_index)
 
-user_pieces = []
-computer_pieces = []
 board = Board()
 create_board()
 create_pieces(board.board[0], False)
@@ -182,10 +185,19 @@ create_pieces(board.board[2], False)
 create_pieces(board.board[5], True)
 create_pieces(board.board[6], False)
 create_pieces(board.board[7], True) 
-# dupa = ComputerPiece("E", 2)
-# dupa = ComputerPiece("E", 4)
-# dupa = ComputerPiece("D", 3)
-test = UserPiece("D", 5)
-test.queen = True
+
+test = White("B", 1)
+
+
+
+computer_pieces = [piece for row in board.board for piece in row if isinstance(piece, ComputerPiece)]
+user_pieces = [piece for row in board.board for piece in row if isinstance(piece, UserPiece)]
+white_squares = [square for row in board.board for square in row if isinstance(square, White)]
+
+
+
+    
+
+
 
 

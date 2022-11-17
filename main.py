@@ -10,12 +10,30 @@ def must_eat():
         second_y = user_piece.y + 1
         for computer_piece in computer_pieces:
             index = Square.rows_letters.index(next_row)
-            if user_piece in result and (computer_piece.position == (row, first_y) or computer_piece.position == (row, second_y)):
-                result[user_piece] = result[user_piece], computer_piece
-            elif computer_piece.position == (row, first_y) and isinstance(board.board[index][first_y - 2], White):
-                result[user_piece] = computer_piece
-            elif computer_piece.position == (row, second_y) and isinstance(board.board[index][first_y + 2], White):
-                result[user_piece] = computer_piece
+            if user_piece.queen == True:
+                if computer_piece.position in user_piece.move():
+                    index = Square.rows_letters.index(computer_piece.position[0])
+                    if index > 0 and index < 7:
+                        try:
+                            if user_piece in result and ((isinstance(board.board[index - 1][computer_piece.y], White) and (isinstance(board.board[index + 1][computer_piece.y - 2], White) or board.board[index + 1][computer_piece.y - 2] is user_piece)) or (isinstance(board.board[index - 1][computer_piece.y - 2], White) and (isinstance(board.board[index + 1][computer_piece.y], White) or board.board[index + 1][computer_piece.y] is user_piece)) or (isinstance(board.board[index - 1][computer_piece.y], White) and (isinstance(board.board[index + 1][computer_piece.y - 2], White) or board.board[index - 1][computer_piece.y - 2] is user_piece)) or (isinstance(board.board[index - 1][computer_piece.y - 2], White) and (isinstance(board.board[index + 1][computer_piece.y], White) or board.board[index - 1][computer_piece.y] is user_piece))):
+                                result[user_piece] = result[user_piece], computer_piece
+                            elif isinstance(board.board[index - 1][computer_piece.y], White) and (isinstance(board.board[index + 1][computer_piece.y - 2], White) or board.board[index + 1][computer_piece.y - 2] is user_piece):
+                                result[user_piece] = computer_piece
+                            elif isinstance(board.board[index - 1][computer_piece.y - 2], White) and (isinstance(board.board[index + 1][computer_piece.y], White) or board.board[index + 1][computer_piece.y] is user_piece):
+                                result[user_piece] = computer_piece    
+                            elif isinstance(board.board[index - 1][computer_piece.y], White) and (isinstance(board.board[index + 1][computer_piece.y - 2], White) or board.board[index - 1][computer_piece.y - 2] is user_piece):
+                                result[user_piece] = computer_piece   
+                            elif isinstance(board.board[index - 1][computer_piece.y - 2], White) and (isinstance(board.board[index + 1][computer_piece.y], White) or board.board[index - 1][computer_piece.y] is user_piece):
+                                result[user_piece] = computer_piece           
+                        except:
+                            pass
+            if user_piece.queen == False:
+                if user_piece in result and ((computer_piece.position == (row, first_y) and isinstance(board.board[index][first_y - 2], White) or computer_piece.position == (row, second_y) and isinstance(board.board[index][first_y + 2], White))) :
+                    result[user_piece] = result[user_piece], computer_piece
+                elif computer_piece.position == (row, first_y) and isinstance(board.board[index][first_y - 2], White):
+                    result[user_piece] = computer_piece
+                elif computer_piece.position == (row, second_y) and isinstance(board.board[index][first_y + 2], White):
+                    result[user_piece] = computer_piece       
     if len(result) == 0:
         return False
     print("You have the must eat! Choose a piece: ")
@@ -29,7 +47,18 @@ def must_eat():
             if isinstance(square, Piece):
                 piece.selected = True
                 board.display()
-                if piece.y > square.position[1]:
+                if piece.queen == True:
+                    up_row = Square.rows_letters[Square.rows_letters.index(square.position[0]) - 1]
+                    down_row = Square.rows_letters[Square.rows_letters.index(square.position[0]) + 1]
+                    if piece.y > square.position[1] and piece.x > square.position[0]:
+                        piece.change_position(up_row, square.position[1] - 1)
+                    elif piece.y < square.position[1] and piece.x > square.position[0]:
+                        piece.change_position(up_row, square.position[1] + 1)
+                    elif piece.y > square.position[1] and piece.x < square.position[0]:
+                        piece.change_position(down_row, square.position[1] - 1)
+                    else:
+                        piece.change_position(down_row, square.position[1] + 1)
+                elif piece.y > square.position[1]:
                     piece.change_position(next_row, square.position[1] - 1)
                 else:
                     piece.change_position(next_row, square.position[1] + 1)
@@ -45,13 +74,24 @@ def must_eat():
                     if select_piece_to_eat == f"{option.x}{str(option.y)}":
                         piece.selected = True
                         board.display()
-                        if piece.y > option.y:
+                        if piece.queen == True:
+                            up_row = Square.rows_letters[Square.rows_letters.index(option.x) - 1]
+                            down_row = Square.rows_letters[Square.rows_letters.index(option.x) + 1]
+                            if piece.y > option.y and piece.x > option.x:
+                                piece.change_position(up_row, option.y - 1)
+                            elif piece.y < option.y and piece.x > option.x:
+                                piece.change_position(up_row, option.y + 1)
+                            elif piece.y > option.y and piece.x < option.x:
+                                piece.change_position(down_row, option.y - 1)
+                            else:
+                                piece.change_position(down_row, option.y + 1)
+                        elif piece.y > option.y:
                             piece.change_position(next_row, option.y - 1)
                         else:
                             piece.change_position(next_row, option.y + 1)
                         piece.selected = False
                         White(option.x, option.y)
-                        computer_pieces.remove(option)                                              
+                        computer_pieces.remove(option)                                            
     return True
 
 def user_turn():
@@ -67,22 +107,36 @@ def user_turn():
             continue
         break
     for piece in user_pieces:
-        if piece.position == (select_piece_x, select_piece_y):
-            piece.selected = True
-            board.display()
-            if piece.move() == False:
-                print("The piece can't be moved")
+        if piece.queen == False:
+            if piece.position == (select_piece_x, select_piece_y):
+                piece.selected = True
+                board.display()
+                if piece.move() == False:
+                    print("The piece can't be moved")
+                    piece.selected = False
+                    return False
                 piece.selected = False
-                return False
-            piece.selected = False
-            
+        else:
+            for square in piece.move():
+                print(f"{square[0]}{square[1]}", sep=" ", end=" ")
+            print("\r")
+            while True:
+                try:
+                    go = input("Choose where you want to move the piece: ")
+                    go = (go[0].upper(), int(go[1]))
+                    if go in piece.move():
+                        piece.change_position(go[0], go[1])
+                        break
+                except ValueError:
+                    print("Enter a valid move, please try again.")
+                    continue
 
-while True:
+while True:   
     board.display()
     if must_eat() == True:
         continue
     user_turn()
     
     
-        
+
     
