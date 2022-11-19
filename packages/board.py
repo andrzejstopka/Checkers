@@ -1,16 +1,24 @@
 from termcolor import colored
 
-
+computer_pieces = []
+user_pieces = []
+white_squares = []
 class Square:
     rows_letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
 
     def __init__(self, x, y):
+        self.x = x
+        self.y = y
         self.position = (x, y)
         index = self.rows_letters.index(x)
         board.board[index][y - 1] = self
+    
 
-
-class White(Square):
+class White(Square): 
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        white_squares.append(self)
+        
     def __repr__(self):
         return chr(9632)
 
@@ -58,6 +66,10 @@ class Piece:
 
 
 class UserPiece(Piece):
+    def __init__(self, x, y):
+        super().__init__(x,y)
+        user_pieces.append(self)
+         
     def __repr__(self):
         if self.queen == False:
             if self.selected == False:
@@ -67,65 +79,68 @@ class UserPiece(Piece):
         else:
                 return colored(chr(9830), "red")
 
-    def move(self):
-        if self.queen == False:
-            possible_moves = []
-            row = Square.rows_letters[Square.rows_letters.index(self.x) - 1]
-            index = Square.rows_letters.index(row)
-            first_option = f"{row}{str(self.y - 1)}"
-            second_option = f"{row}{str(self.y + 1)}"
-            if self.y - 1 > 0 and isinstance(board.board[index][self.y - 2], White) == True:
-                possible_moves.append(first_option)
-            if self.y + 1 < 9 and isinstance(board.board[index][self.y], White) == True:
-                possible_moves.append(second_option)
-            if len(possible_moves) == 0:
-                return False
-            print("Possible moves:")
-            print(*possible_moves, sep=", ")
-            while True:
-                choose_move = input("Choose square which you want to go: ").capitalize()
-                if choose_move == first_option:
-                    self.change_position(row, self.y - 1)
-                elif choose_move == second_option:
-                    self.change_position(row, self.y + 1)
-                else:
-                    print("You must choose one of the following moves.")
-                    continue
-                break
-        else:
-            possible_moves = []
-            index = Square.rows_letters.index(self.x)
-            y = self.y
-            while index > 0 and y > 1:
-                index -= 1 
-                y -= 1
-                possible_moves.append((Square.rows_letters[index], y))
-            index = Square.rows_letters.index(self.x)
-            y = self.y
-            while index > 0 and y < 8:
-                index -= 1
-                y += 1
-                possible_moves.append((Square.rows_letters[index], y))
-            index = Square.rows_letters.index(self.x)
-            y = self.y
-            while index < 7 and y > 1:
-                index += 1
-                y -= 1
-                possible_moves.append((Square.rows_letters[index], y))
-            index = Square.rows_letters.index(self.x)
-            y = self.y
-            while index < 7 and y < 8:
-                index += 1
-                y += 1
-                possible_moves.append((Square.rows_letters[index], y))
+    # def move(self):
+    #     if self.queen == False:
+    #         possible_moves = []
+    #         row = Square.rows_letters[Square.rows_letters.index(self.x) - 1]
+    #         index = Square.rows_letters.index(row)
+    #         first_option = f"{row}{str(self.y - 1)}"
+    #         second_option = f"{row}{str(self.y + 1)}"
+    #         if self.y - 1 > 0 and isinstance(board.board[index][self.y - 2], White) == True:
+    #             possible_moves.append(first_option)
+    #         if self.y + 1 < 9 and isinstance(board.board[index][self.y], White) == True:
+    #             possible_moves.append(second_option)
+    #         if len(possible_moves) == 0:
+    #             return False
+    #         print("Possible moves:")
+    #         print(*possible_moves, sep=", ")
+    #         while True:
+    #             choose_move = input("Choose square which you want to go: ").capitalize()
+    #             if choose_move == first_option:
+    #                 self.change_position(row, self.y - 1)
+    #             elif choose_move == second_option:
+    #                 self.change_position(row, self.y + 1)
+    #             else:
+    #                 print("You must choose one of the following moves.")
+    #                 continue
+    #             break
+    #     else:
+    #         possible_moves = []
+    #         index = Square.rows_letters.index(self.x)
+    #         y = self.y
+    #         while index > 0 and y > 1:
+    #             index -= 1 
+    #             y -= 1
+    #             possible_moves.append((Square.rows_letters[index], y))
+    #         index = Square.rows_letters.index(self.x)
+    #         y = self.y
+    #         while index > 0 and y < 8:
+    #             index -= 1
+    #             y += 1
+    #             possible_moves.append((Square.rows_letters[index], y))
+    #         index = Square.rows_letters.index(self.x)
+    #         y = self.y
+    #         while index < 7 and y > 1:
+    #             index += 1
+    #             y -= 1
+    #             possible_moves.append((Square.rows_letters[index], y))
+    #         index = Square.rows_letters.index(self.x)
+    #         y = self.y
+    #         while index < 7 and y < 8:
+    #             index += 1
+    #             y += 1
+    #             possible_moves.append((Square.rows_letters[index], y))
             
-            result = []
-            for x in possible_moves:
-                for y in white_squares:
-                    if y.position == (x[0], x[1]):
-                        result.append(x)
-            return result
+    #         result = []
+    #         for x in possible_moves:
+    #             for y in white_squares:
+    #                 if y.position == (x[0], x[1]):
+    #                     result.append(x)
+    #         return result
 class ComputerPiece(Piece):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        computer_pieces.append(self)
     def __repr__(self):
         if self.queen == False:
             if self.selected == False:
@@ -134,8 +149,9 @@ class ComputerPiece(Piece):
                 return colored(chr(9689), "yellow")
         else:
             return colored(chr(9830), "yellow")
+  
 
-
+    
 def create_board():
     i = 0
     for row in board.board:
@@ -186,17 +202,35 @@ create_pieces(board.board[5], True)
 create_pieces(board.board[6], False)
 create_pieces(board.board[7], True) 
 
-test = White("B", 1)
 
+for x in white_squares:
+    if x.position[0] == "A" or x.position[0] == "B" or x.position[0] == "C" or x.position[0] == "F" or x.position[0] == "G" or x.position[0] == "H":
+        white_squares.remove(x)
+for x in white_squares:
+    if x.position[0] == "A" or x.position[0] == "B" or x.position[0] == "C" or x.position[0] == "F" or x.position[0] == "G" or x.position[0] == "H":
+        white_squares.remove(x)
+for x in white_squares:
+    if x.position[0] == "A" or x.position[0] == "B" or x.position[0] == "C" or x.position[0] == "F" or x.position[0] == "G" or x.position[0] == "H":
+        white_squares.remove(x)
 
-
-computer_pieces = [piece for row in board.board for piece in row if isinstance(piece, ComputerPiece)]
-user_pieces = [piece for row in board.board for piece in row if isinstance(piece, UserPiece)]
-white_squares = [square for row in board.board for square in row if isinstance(square, White)]
-
-
+for x in white_squares:
+    if x.position[0] == "A" or x.position[0] == "B" or x.position[0] == "C" or x.position[0] == "F" or x.position[0] == "G" or x.position[0] == "H":
+        white_squares.remove(x)
+        
 
     
+
+# test1 = UserPiece("D", 3)
+test2 = UserPiece("E", 2)
+test2.queen = True
+# test3 = ComputerPiece("E", 2)
+# test4 = ComputerPiece("E", 4)
+# test4 = White("C", 4)
+
+
+
+
+
 
 
 
