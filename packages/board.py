@@ -1,8 +1,10 @@
 from termcolor import colored
 
-computer_pieces = []
+opponent_pieces = []
 user_pieces = []
 white_squares = []
+
+
 class Square:
     rows_letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
 
@@ -12,13 +14,13 @@ class Square:
         self.position = (x, y)
         index = self.rows_letters.index(x)
         board.board[index][y - 1] = self
-    
 
-class White(Square): 
+
+class White(Square):
     def __init__(self, x, y):
         super().__init__(x, y)
         white_squares.append(self)
-        
+
     def __repr__(self):
         return chr(9632)
 
@@ -47,7 +49,7 @@ class Piece:
 
     def __init__(self, x, y):
         self.x = x
-        self.y = y 
+        self.y = y
         self.position = (x, y)
         index = Square.rows_letters.index(x)
         board.board[index][y - 1] = self
@@ -64,12 +66,11 @@ class Piece:
         board.board[index][y - 1] = self
 
 
-
 class UserPiece(Piece):
     def __init__(self, x, y):
-        super().__init__(x,y)
+        super().__init__(x, y)
         user_pieces.append(self)
-         
+
     def __repr__(self):
         if self.queen == False:
             if self.selected == False:
@@ -77,7 +78,7 @@ class UserPiece(Piece):
             else:
                 return colored(chr(9689), "red")
         else:
-                return colored(chr(9830), "red")
+            return colored(chr(9830), "red")
 
     # def move(self):
     #     if self.queen == False:
@@ -109,7 +110,7 @@ class UserPiece(Piece):
     #         index = Square.rows_letters.index(self.x)
     #         y = self.y
     #         while index > 0 and y > 1:
-    #             index -= 1 
+    #             index -= 1
     #             y -= 1
     #             possible_moves.append((Square.rows_letters[index], y))
     #         index = Square.rows_letters.index(self.x)
@@ -130,17 +131,20 @@ class UserPiece(Piece):
     #             index += 1
     #             y += 1
     #             possible_moves.append((Square.rows_letters[index], y))
-            
+
     #         result = []
     #         for x in possible_moves:
     #             for y in white_squares:
     #                 if y.position == (x[0], x[1]):
     #                     result.append(x)
     #         return result
+
+
 class ComputerPiece(Piece):
     def __init__(self, x, y):
         super().__init__(x, y)
-        computer_pieces.append(self)
+        opponent_pieces.append(self)
+
     def __repr__(self):
         if self.queen == False:
             if self.selected == False:
@@ -149,9 +153,8 @@ class ComputerPiece(Piece):
                 return colored(chr(9689), "yellow")
         else:
             return colored(chr(9830), "yellow")
-  
 
-    
+
 def create_board():
     i = 0
     for row in board.board:
@@ -186,12 +189,15 @@ def create_pieces(row, from_second):
                         if square_index == 0:
                             ComputerPiece(Square.rows_letters[list_index], 8)
                         else:
-                            ComputerPiece(Square.rows_letters[list_index], square_index)
+                            ComputerPiece(
+                                Square.rows_letters[list_index], square_index)
                     else:
                         if square_index == 0:
                             UserPiece(Square.rows_letters[list_index], 8)
                         else:
-                            UserPiece(Square.rows_letters[list_index], square_index)
+                            UserPiece(
+                                Square.rows_letters[list_index], square_index)
+
 
 board = Board()
 create_board()
@@ -200,7 +206,7 @@ create_pieces(board.board[1], True)
 create_pieces(board.board[2], False)
 create_pieces(board.board[5], True)
 create_pieces(board.board[6], False)
-create_pieces(board.board[7], True) 
+create_pieces(board.board[7], True)
 
 
 for x in white_squares:
@@ -216,22 +222,11 @@ for x in white_squares:
 for x in white_squares:
     if x.position[0] == "A" or x.position[0] == "B" or x.position[0] == "C" or x.position[0] == "F" or x.position[0] == "G" or x.position[0] == "H":
         white_squares.remove(x)
-        
 
-    
 
 # test1 = UserPiece("D", 3)
 test2 = UserPiece("E", 2)
 test2.queen = True
 # test3 = ComputerPiece("E", 2)
 # test4 = ComputerPiece("E", 4)
-# test4 = White("C", 4)
-
-
-
-
-
-
-
-
-
+test4 = White("B", 5)
