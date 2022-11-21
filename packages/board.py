@@ -1,6 +1,6 @@
 from termcolor import colored
 
-opponent_pieces = []
+computer_pieces = []
 user_pieces = []
 white_squares = []
 
@@ -143,7 +143,7 @@ class UserPiece(Piece):
 class ComputerPiece(Piece):
     def __init__(self, x, y):
         super().__init__(x, y)
-        opponent_pieces.append(self)
+        computer_pieces.append(self)
 
     def __repr__(self):
         if self.queen == False:
@@ -224,9 +224,3 @@ for x in white_squares:
         white_squares.remove(x)
 
 
-# test1 = UserPiece("D", 3)
-test2 = UserPiece("E", 2)
-test2.queen = True
-# test3 = ComputerPiece("E", 2)
-# test4 = ComputerPiece("E", 4)
-test4 = White("B", 5)
