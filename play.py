@@ -31,10 +31,6 @@ def possible_eating(piece, opponent_pieces):
                         if opponent_piece_row_index + 1 == square_row_index and opponent_piece.y - 1 == square.y:
                             possible_eating.append(
                                 (opponent_piece.position, square.position))
-        if len(possible_eating) == 0:
-            return False
-        else:
-            return (piece.position, possible_eating)
     # Można spróbować że jak wyłapie przy iteracji pionka playera to jest break od razu, dodać for piece in player_pieces
     if piece.queen == True:
         possible_eating = []
@@ -48,38 +44,53 @@ def possible_eating(piece, opponent_pieces):
                         if possible_moves.index(move_list) == 0:
                             if opponent_piece.position == (Square.rows_letters[move_index_x - 1], move_y - 1):
                                 if square.position == (Square.rows_letters[move_index_x - 2], move_y - 2):
-                                    possible_eating.append(opponent_piece)
+                                    possible_eating.append((opponent_piece, square))
                         if possible_moves.index(move_list) == 1:
                             if opponent_piece.position == (Square.rows_letters[move_index_x - 1], move_y + 1):
                                 if square.position == (Square.rows_letters[move_index_x - 2], move_y + 2):
-                                    possible_eating.append(opponent_piece)
+                                    possible_eating.append((opponent_piece, square))
                         if possible_moves.index(move_list) == 2:
                             if opponent_piece.position == (Square.rows_letters[move_index_x + 1], move_y - 1):
                                 if square.position == (Square.rows_letters[move_index_x + 2], move_y - 2):
-                                    possible_eating.append(opponent_piece)
+                                    possible_eating.append((opponent_piece, square))
                         if possible_moves.index(move_list) == 3:
                             if opponent_piece.position == (Square.rows_letters[move_index_x + 1], move_y + 1):
                                 if square.position == (Square.rows_letters[move_index_x + 2], move_y + 2):
-                                    possible_eating.append(opponent_piece)
-        for piece in possible_eating:
-            print(f"{piece.position[0]}{piece.position[1]}", end=" ")
-        print("\r")
+                                    possible_eating.append((opponent_piece, square))
+        if len(possible_eating) == 0:
+            return False
+        else:
+            return (piece.position, possible_eating)
+        
+        # for eating_piece in possible_eating:
+        #     print(f"{eating_piece[0].position[0]}{eating_piece[0].position[1]}", end=" ")
+        # print("\r")
 
-        while True:
-            try:
-                piece_to_eat = input(
-                    "Choose a piece to be eaten: ").capitalize()
-                piece_to_eat_x = piece_to_eat[0]
-                piece_to_eat_y = int(piece_to_eat[1])
-                if all(piece.position != (piece_to_eat_x, piece_to_eat_y) for piece in possible_eating):
-                    raise ValueError
-            except ValueError:
-                print("You must select from the following options.")
-                continue
-            break
-        for opponent_piece in opponent_pieces:
-            if opponent_piece.position == (piece_to_eat_x, piece_to_eat_y):
-#### CHYBA TRZEBA BĘDZIE DODAĆ DO TEGO POSSIBLE EATING ODPOWIADAJĄCY IM WHITE SQUARE ZEBY POTEM BY EATINGU BYLO LATWIEJ 
+        # while True:
+        #     try:
+        #         piece_to_eat = input(
+        #             "Choose a piece to be eaten: ").capitalize()
+        #         piece_to_eat_x = piece_to_eat[0]
+        #         piece_to_eat_y = int(piece_to_eat[1])
+        #         if all(eating_piece[0].position != (piece_to_eat_x, piece_to_eat_y) for eating_piece in possible_eating):
+        #             raise ValueError
+        #     except ValueError:
+        #         print("You must select from the following options.")
+        #         continue
+        #     break
+        # for eating_piece in possible_eating:
+        #     if eating_piece[0].position == (piece_to_eat_x, piece_to_eat_y):
+        #         pair = eating_piece
+        # for opponent_piece in opponent_pieces:
+        #     if opponent_piece.position == (piece_to_eat_x, piece_to_eat_y):
+        #         opponent_pieces.remove(opponent_piece)
+        #         White(piece_to_eat_x, piece_to_eat_y)
+        #         for square in white_squares:
+        #             if square.position == pair[1]:
+        #                 white_squares.remove(square)
+        #         White(piece.position[0], piece.position[1])
+        #         change_position(piece, pair[1].position[0], pair[1].position[1])
+        #         board.board[Square.rows_letters.index(piece.position[0])][piece.position[1] - 1] = piece
 
 def check_must_eat(player_pieces, opponent_pieces):
     pieces_can_eat = []
@@ -99,8 +110,12 @@ def choose_piece_to_eat(player_pieces, opponent_pieces):
         if possible_eating(piece, opponent_pieces) != False:
             pieces_to_eat.append(possible_eating(piece, opponent_pieces))
     for piece in pieces_to_eat:
-        print(f"{piece[0][0]}{piece[0][1]}", end=" ")
-    print("\r")
+        print(piece)
+        # if piece[0].queen == False:
+        #     print(f"{piece[0][0]}{piece[0][1]}", end=" ")
+        # print("\r")
+        # else:
+            
     while True:
         try:
             choose_piece = input("Choose a piece to eat: ").capitalize()
