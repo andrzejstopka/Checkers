@@ -80,66 +80,6 @@ class UserPiece(Piece):
         else:
             return colored(chr(9830), "red")
 
-    # def move(self):
-    #     if self.queen == False:
-    #         possible_moves = []
-    #         row = Square.rows_letters[Square.rows_letters.index(self.x) - 1]
-    #         index = Square.rows_letters.index(row)
-    #         first_option = f"{row}{str(self.y - 1)}"
-    #         second_option = f"{row}{str(self.y + 1)}"
-    #         if self.y - 1 > 0 and isinstance(board.board[index][self.y - 2], White) == True:
-    #             possible_moves.append(first_option)
-    #         if self.y + 1 < 9 and isinstance(board.board[index][self.y], White) == True:
-    #             possible_moves.append(second_option)
-    #         if len(possible_moves) == 0:
-    #             return False
-    #         print("Possible moves:")
-    #         print(*possible_moves, sep=", ")
-    #         while True:
-    #             choose_move = input("Choose square which you want to go: ").capitalize()
-    #             if choose_move == first_option:
-    #                 self.change_position(row, self.y - 1)
-    #             elif choose_move == second_option:
-    #                 self.change_position(row, self.y + 1)
-    #             else:
-    #                 print("You must choose one of the following moves.")
-    #                 continue
-    #             break
-    #     else:
-    #         possible_moves = []
-    #         index = Square.rows_letters.index(self.x)
-    #         y = self.y
-    #         while index > 0 and y > 1:
-    #             index -= 1
-    #             y -= 1
-    #             possible_moves.append((Square.rows_letters[index], y))
-    #         index = Square.rows_letters.index(self.x)
-    #         y = self.y
-    #         while index > 0 and y < 8:
-    #             index -= 1
-    #             y += 1
-    #             possible_moves.append((Square.rows_letters[index], y))
-    #         index = Square.rows_letters.index(self.x)
-    #         y = self.y
-    #         while index < 7 and y > 1:
-    #             index += 1
-    #             y -= 1
-    #             possible_moves.append((Square.rows_letters[index], y))
-    #         index = Square.rows_letters.index(self.x)
-    #         y = self.y
-    #         while index < 7 and y < 8:
-    #             index += 1
-    #             y += 1
-    #             possible_moves.append((Square.rows_letters[index], y))
-
-    #         result = []
-    #         for x in possible_moves:
-    #             for y in white_squares:
-    #                 if y.position == (x[0], x[1]):
-    #                     result.append(x)
-    #         return result
-
-
 class ComputerPiece(Piece):
     def __init__(self, x, y):
         super().__init__(x, y)
@@ -153,8 +93,8 @@ class ComputerPiece(Piece):
                 return colored(chr(9689), "yellow")
         else:
             return colored(chr(9830), "yellow")
-
-
+               
+    
 def create_board():
     i = 0
     for row in board.board:
